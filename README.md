@@ -9,12 +9,9 @@ Este repositório contém a documentação da API de monitoramento das interaç�
 
 A `UraChatMonitor API` registra logs importantes para análise de desempenho e estabilidade de fluxos. Essa API é usada em três momentos distintos:
 
-- **`/log_start`**: registra o início da interação (como entrada na URA ou chatbot).
+- **`/log_start`**: registra o início da interação.
 - **`/log_end`**: registra o final da interação, incluindo o status e duração total.
-- **`/log_service_call`**: registra chamadas de APIs internas feitas durante a conversa (por exemplo, consulta de contratos, perfil do cliente, etc).
-
-Esses registros permitem monitoramento com Prometheus, geração de métricas e envio de logs estruturados para ferramentas como Loki ou Grafana.
-
+- **`/log_service_call`**: registra chamadas de APIs internas feitas durante a conversa.
 ---
 
 ## 🧭 Como visualizar a documentação da API (Swagger)
