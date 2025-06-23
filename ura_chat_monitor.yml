@@ -1,0 +1,192 @@
+openapi: 3.0.3
+info:
+  title: UraChatMonitor API
+  version: 1.0.0
+  description: |
+    Essa API é utilizada para registrar informações de status das APIs internas e o início e fim de interações nos canais de voz e chat. 
+    Utiliza o log_start para extrair informações relevantes do início da interação, log_end para o final da interação e, por fim, 
+    log_service_call para obter informações da API interna. Fornece dados como result code, tempo de duração do fluxo, timeout e close status.
+
+tags:
+  - name: Endpoints
+
+paths:
+  /ura-chat-monitor.barramento-corporativo.alloha.com/log_start:
+    post:
+      tags:
+        - Endpoints
+      summary: Requisição utilizada para monitorar o início da interação.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogStart'
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              example:
+                result: ok
+                timestamp: "2025-06-23T14:00:00.000000UTC"
+        '400':
+          description: Requisição malformada ou campos ausentes
+
+  /ura-chat-monitor.barramento-corporativo.alloha.com/log_end:
+    post:
+      tags:
+        - Endpoints
+      summary: Requisição utilizada para monitorar o final da interação.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogEnd'
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              example:
+                result: ok
+                timestamp: "2025-06-23T14:00:00.000000UTC"
+        '400':
+          description: Requisição malformada ou campos ausentes
+
+  /ura-chat-monitor.barramento-corporativo.alloha.com/log_service_call:
+    post:
+      tags:
+        - Endpoints
+      summary: Requisição utilizada para monitorar as chamadas de API internas.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogServiceCall'
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              example:
+                result: ok
+                timestamp: "2025-06-23T14:00:00.000000UTC"
+        '400':
+          description: Requisição malformada ou campos ausentes
+
+
+components:
+  schemas:
+    LogStart:
+      type: object
+      required: [consumer, flow, brand, node, time, called_number]
+      properties:
+        consumer:
+          type: string
+          description: Esse field espera o nome da plataforma que será monitorada. Exemplo - Sigmabot, Ura, Fintalk.
+        flow:
+          type: string
+          description: Esse field espera o nome do fluxo que será monitorado. Exemplo - Agendamento, Principal Giga, Ativo_Cobrança
+        brand:
+          type: string
+          description: Esse field espera o nome da marca que será monitorado. Exemplo - Giga +, Giga + Empresas.
+        node:
+          type: string
+          description: Esse field espera o nome do módulo que está sendo usado, serve para nos ajudar a identificar onde está com problema. Exemplo - Módulo de logstart pode ser nomeado como Start.
+        time:
+          type: string
+          format: YYYY:MM:DD HH:MM:SS
+          description: Esse field representa o momento em que o log dessa requisição foi gerado. Timestamp
+        called_number:
+          type: string
+          description: Esse field espera o número que está enviando mensagem ou ligando.
+    LogServiceCall:
+      type: object
+      required: [consumer, flow, brand, node, service, result-code, service-call-start-time, service-call-end-time, timeout, time]
+      properties:
+        consumer:
+          type: string
+          description: Esse field espera o nome da plataforma que será monitorada. Exemplo - Sigmabot, Ura, Fintalk.
+        flow:
+          type: string
+          description: Esse field espera o nome do fluxo que será monitorado. Exemplo - Agendamento, Principal Giga, Ativo_Cobrança
+        brand:
+          type: string
+          description: Esse field espera o nome da marca que será monitorado. Exemplo - Giga +, Giga + Empresas.
+        node:
+          type: string
+          description: Esse field espera o nome do módulo que está sendo usado, serve para nos ajudar a identificar onde está com problema. Exemplo - Módulo de logstart pode ser nomeado como Start.
+        service:
+          type: string
+          description: Esse field espera o caminho da API que está em uso. Exemplo - /customers/contracts/by-phone?phone=${telefone}
+        result-code:
+          type: string
+          description: Esse field espera o código de resposta da API. Não devemos definir isso manualmente, o resultado deve vir de uma variável, ela deve pegar o response code da API interna que desejamos monitorar.
+        service-call-start-time:
+          type: string
+          format: YYYY:MM:DD HH:MM:SS
+          description: Esse field serve para monitorar o momento em que a interação com a API interna foi iniciada. Ele espera uma variável com tal informação.
+        service-call-end-time:
+          type: string
+          format: YYYY:MM:DD HH:MM:SS
+          description: Esse field serve para monitorar o momento em que a interação com a API interna foi finalizada. Ele espera uma variável com tal informação.
+        timeout:
+          type: string
+          description: Esse field espera receber "true" ou "false". Representa se houve timeout na API interna.
+        time:
+          type: string
+          format: YYYY:MM:DD HH:MM:SS
+          description: Esse field representa o momento em que o log dessa requisição foi gerado. Timestamp
+    LogEnd:
+      type: object
+      required:
+        - consumer
+        - flow
+        - brand
+        - node
+        - close-status
+        - interaction-start-time
+        - interaction-end-time
+        - time
+        - result-code
+      properties:
+        consumer:
+          type: string
+          description: Esse field espera o nome da plataforma que será monitorada. Exemplo - Sigmabot, Ura, Fintalk.
+        flow:
+          type: string
+          description: Esse field espera o nome do fluxo que será monitorado. Exemplo - Agendamento, Principal Giga, Ativo_Cobrança
+        brand:
+          type: string
+          description: Esse field espera o nome da marca que será monitorado. Exemplo - Giga +, Giga + Empresas.
+        node:
+          type: string
+          description: Esse field espera o nome do módulo que está sendo usado. Exemplo - Módulo de logstart pode ser nomeado como Start.
+        result-code:
+          type: string
+          description: Esse field espera o código de resposta da API. Não devemos definir isso manualmente, o resultado deve vir de uma variável, ela deve pegar o response code da API interna que desejamos monitorar.
+        close-status:
+          type: string 
+          description: Esse field espera o status de finalização da interação do cliente com o fluxo. Exemplo - Normal, Derived.
+        derived-to:
+          type: string
+          description: Campo não obrigatório. Se torna obrigatório quando o "close-status" é "Derived". Esse field espera a campanha que o cliente foi transferido.
+        interaction-start-time:
+          type: string
+          format: YYYY:MM:DD HH:MM:SS
+          description: Esse field serve para monitorar o momento em que a interação do cliente com o fluxo iniciou. Ele espera uma variável com tal informação. OBS. Deve ter o mesmo valor do start-time que foi declarado no log_start.
+        interaction-end-time:
+          type: string
+          format: YYYY:MM:DD HH:MM:SS
+          description: Esse field serve para monitorar o momento em que a interação do cliente com o fluxo terminou. Ele espera uma variável com tal informação.
+        time:
+          type: string
+          format: YYYY:MM:DD HH:MM:SS
+          description: Esse field representa o momento em que o log dessa requisição foi gerado. Timestamp
+
+        timestamp:
+          type: string
+          example: 2024-06-16T13:55:12.000000UTC
