@@ -14,7 +14,7 @@ A `UraChatMonitor API` registra logs importantes para análise de desempenho e e
 - **`/log_service_call`**: registra chamadas de APIs internas feitas durante a conversa.
 ---
 
-## 🧭 Como visualizar a documentação da API (Swagger)
+## 🧭 Como visualizar a documentação da API (via Swagger)
 ---
 1. Acesse o site: [https://editor.swagger.io](https://editor.swagger.io)
 2. Clique em **File > Import File** e selecione o arquivo `ura_chat_monitor.yaml`.
